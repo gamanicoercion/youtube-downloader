@@ -74,9 +74,12 @@ elif file_type not in ["mp4", "webm"]:
 if file_type == "mp3":
     os.chdir("yt-dlp-py/mp3")
     os.system(f'yt-dlp -o "{inp_name}, {duration}, {aud_quality}" -x --audio-format mp3 --audio-quality {aud_quality} "https://www.youtube.com{url}"')
+    os.system(f'ffmpeg -i "{inp_name}, {duration}, {aud_quality}" "{inp_name}, {duration}, {aud_quality}"')
 elif file_type == "mp4":
     os.chdir("yt-dlp-py/mp4")
     os.system(f'yt-dlp -f bv+ba -o "{inp_name}, {duration}" --recode-video mp4 "https://www.youtube.com{url}"')
+    os.system(f'ffmpeg -i "{inp_name}, {duration}" "{inp_name}, {duration}"')
 elif file_type == "webm":
     os.chdir("yt-dlp-py/webm")
     os.system(f'yt-dlp -f bv+ba -o "{inp_name}, {duration}" "https://www.youtube.com{url}"')
+    os.system(f'ffmpeg -i "{inp_name}, {duration}" "{inp_name}, {duration}"')
