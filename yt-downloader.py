@@ -68,7 +68,7 @@ if file_type == "mp3":
     inp_quality = input(color("Do you want to choose the audio quality?\ny/n: ", a))
     if inp_quality in ["y", "Y"]:
         aud_quality = input(color('Input quality of audio:\n("worst", "best", "average", "avg"): ', b))
-        if aud_quality == "best":
+        if aud_quality in ['best', 'bet', 'bset', 'b']:
             aud_quality = 0
         elif aud_quality == "worst":
             aud_quality = 10
