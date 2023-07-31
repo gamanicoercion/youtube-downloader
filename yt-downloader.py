@@ -23,11 +23,19 @@ if not os.path.isdir("yt-dlp-py"):
         os.mkdir(f"yt-dlp-py/{folder}")
 query_inp = input(color("Input search query: ", x)) # input for video search
 
-results = YoutubeSearch(f'{query_inp}', max_results=5).to_json()
-results_dict = json.loads(results)
-in_dict = results_dict['videos']
-url = in_dict[0]['url_suffix'] # grabs video url
-duration = in_dict[0]['duration']
+try:
+    results = YoutubeSearch(f'{query_inp}', max_results=5).to_json()
+    results_dict = json.loads(results)
+    in_dict = results_dict['videos']
+    url = in_dict[0]['url_suffix'] 
+    duration = in_dict[0]['duration']
+except IndexError:
+    print(color("No input detected.\nClosing...", 91))
+    exit()
+except KeyError:
+    print(color("Error.\nClosing...",91))
+    exit()
+
 print(color("Video Details:\nTitle:", f), in_dict[0]['title'],
       color("\nChannel:", f), in_dict[0]['channel'],
       color("\nViews:", f), in_dict[0]['views'],
@@ -42,7 +50,12 @@ if does_choose in ["y", "Y"]:
               color("\nViews:", f), in_dict[i]['views'], 
               color("\nVideo Duration:", f), in_dict[i]['duration'], "\n") # shows the title, channel and view count
     
-    choose_vid = int(input(color("Which video do you want to choose?\n(options: 1-5) ", d)))
+    try:
+        choose_vid = int(input(color("Which video do you want to choose?\n(options: 1-5) ", d)))
+        choose_vid in range(1,6)
+    except ValueError:
+        print(color("Not a viable input.\nClosing...",91))
+        exit()
     url = in_dict[choose_vid-1]['url_suffix']
     duration = in_dict[choose_vid]['duration']
 else:
