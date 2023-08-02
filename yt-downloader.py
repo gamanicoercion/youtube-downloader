@@ -125,7 +125,11 @@ def main(link_or_search):
             done(inp_name)
         elif audio in ['avg', 'average', 'avg', 'av']:
             os.chdir(f"yt-dlp-py/{file_type}")
-            os.system(f'yt-dlp -o "{inp_name}" --merge-output-format {file_type} -S res:{vid_quality},aext  "https://www.youtube.com{url}"')
+            os.system(f'yt-dlp -o "audio" -x --audio-format opus --audio-quality 5  -S res:{vid_quality},aext "https://www.youtube.com{url}"')
+            os.system(f'yt-dlp -o "video" --recode-video {file_type} -S res:{vid_quality},aext "https://www.youtube.com{url}')
+            os.system(f'ffmpeg -i video.{file_type} -i audio.opus -map 0:v -map 1:a -c:v copy -c:a copy {inp_name}.{file_type} -y')
+            os.remove("audio.opus")
+            os.remove(f"video.{file_type}")
             done(inp_name)
 
 link_or_search = input(color('Do you want to download with a link or through searching YouTube?\n(1 or any input for search/2 or "link" for link) ', a))
