@@ -23,23 +23,19 @@ if not os.path.isdir("yt-dlp-py"):
         os.mkdir(f"yt-dlp-py/{folder}")
 query_inp = input(color("Input search query: ", x)) # input for video search
 
-try:
-    results = YoutubeSearch(f'{query_inp}', max_results=5).to_json()
-    results_dict = json.loads(results)
-    in_dict = results_dict['videos']
-    url = in_dict[0]['url_suffix'] 
-    duration = in_dict[0]['duration']
-except IndexError:
-    print(color("No input detected.\nClosing...", 91))
+results = YoutubeSearch(f'{query_inp}', max_results=5).to_json()
+results_dict = json.loads(results)
+in_dict = results_dict['videos']
+if len(in_dict) == 0:
+    print(color('No input, Or no result.\nClosing...', 91))
     exit()
-except KeyError:
-    print(color("Error.\nClosing...",91))
-    exit()
-
+url = in_dict[0]['url_suffix'] 
+duration = in_dict[0]['duration']
 print(color("Video Details:\nTitle:", f), in_dict[0]['title'],
       color("\nChannel:", f), in_dict[0]['channel'],
       color("\nViews:", f), in_dict[0]['views'],
-      color("\nVideo Duration:", f), in_dict[0]['duration'],"\n") # shows the title, channel and view count
+      color("\nVideo Duration:", f), in_dict[0]['duration'],
+      color("\nDate Published:", f), in_dict[0]['publish_time']) 
 
 does_choose = input(color("Do you want more options for results?\n(y/Y or any input for no): ", e))
 if does_choose in ["y", "Y"]:
@@ -48,15 +44,13 @@ if does_choose in ["y", "Y"]:
         print(color(f"Video Details (#{i+1}):\nTitle:", f), in_dict[i]['title'],
               color("\nChannel:", f), in_dict[i]['channel'],
               color("\nViews:", f), in_dict[i]['views'], 
-              color("\nVideo Duration:", f), in_dict[i]['duration'], "\n") # shows the title, channel and view count
-    
-    try:
-        choose_vid = int(input(color("Which video do you want to choose?\n(options: 1-5) ", d)))
-        choose_vid in range(1,6)
-    except ValueError:
+              color("\nVideo Duration:", f), in_dict[i]['duration'],
+              color("\nDate Published:", f), in_dict[i]['publish_time'], "\n")
+    choose_vid = int(input(color("Which video do you want to choose?\n(options: 1-5) ", d))) - 1
+    if choose_vid not in range(5):
         print(color("Not a viable input.\nClosing...",91))
         exit()
-    url = in_dict[choose_vid-1]['url_suffix']
+    url = in_dict[choose_vid]['url_suffix']
     duration = in_dict[choose_vid]['duration']
 else:
     print(color("Showing only 1 result...", "91"))
@@ -64,9 +58,13 @@ else:
 
 inp_name = input(color("Input a filename for the video: ", y))
 file_type = input(color("Choose format (mp3, webm, mp4): ", z))
-if file_type == "mp3":
-    inp_quality = input(color("Do you want to choose the audio quality?\ny/n: ", a))
-    if inp_quality in ["y", "Y"]:
+if file_type not in ["mp3", "mp4", "webm"]:
+    print(color("Not a viable input!\nClosing...", "91"))
+    exit()
+
+elif file_type in ["mp3"]:
+    inp_aud_quality = input(color("Do you want to choose the audio quality?\ny/n: ", a))
+    if inp_aud_quality in ["y", "Y"]:
         aud_quality = input(color('Input quality of audio:\n("worst", "best", "average", "avg"): ', b))
         if aud_quality in ['best', 'bet', 'bset', 'b']:
             aud_quality = 0
@@ -74,24 +72,36 @@ if file_type == "mp3":
             aud_quality = 10
         elif aud_quality in ["average", "avg"]:
             aud_quality = 5
-    elif inp_quality in ["n", "N"]:
+    elif inp_aud_quality in ["n", "N", ""]:
         aud_quality = 5
-  
+    if file_type in ["mp3"]:
+            os.chdir(f"yt-dlp-py/{file_type}")
+            os.system(f'yt-dlp -o "{inp_name}, {duration}, {aud_quality}" -x --audio-format mp3 --audio-quality {aud_quality} "https://www.youtube.com{url}"')
+    
+elif file_type not in ['mp3']:
+    inp_vid_quality = input(color("Do you want to choose the video quality?\n(y/n) ", x))
+    if inp_vid_quality in ["y", "yes", "ye", "Y"]:
+        vid_quality = input(color('Input quality of video...\n(input video quality in pixels, will round the number if not a correct value): ', b))
+        if int(vid_quality) not in range(144, 1441):
+            color("Not a viable input. Defualting to best video.", z)
+        elif vid_quality in range(144, 1441):
+            print(color("Will use the highest resolution closest to your input...", x))
+            qualities = [144, 240, 360, 480, 720, 1080, 1440]
+            for quality in qualities:
+                if vid_quality/quality >= 1.0:
+                    vid_quality = str(quality)
+                    break
+    elif inp_vid_quality in ['no', 'n', 'No', 'N', "nO", ""]:
+        print(color("Defaulting to best available quality.", a))
+        pass
     else:
         print(color("Not a viable input!\nClosing...", "91"))
         exit()
-elif file_type not in ["mp4", "webm"]:
-    print(color("Not a viable input!\nClosing...", "91"))
-    exit()
-
-if file_type == "mp3":
-    os.chdir("yt-dlp-py/mp3")
-    os.system(f'yt-dlp -o "{inp_name}, {duration}, {aud_quality}" -x --audio-format mp3 --audio-quality {aud_quality} "https://www.youtube.com{url}"')
-elif file_type == "mp4":
-    os.chdir("yt-dlp-py/mp4")
-    os.system(f'yt-dlp -f bv+ba -o "{inp_name}, {duration}" --recode-video mp4 "https://www.youtube.com{url}"')
     
-elif file_type == "webm":
-    os.chdir("yt-dlp-py/webm")
-    os.system(f'yt-dlp -f bv+ba -o "{inp_name}, {duration}" "https://www.youtube.com{url}"')
-    
+    audio = input(color("Do you want the worst or best audio? ", g))
+    if audio in ['best', 'bet', 'bset', 'b']:
+        os.chdir(f"yt-dlp-py/{file_type}")
+        os.system(f'yt-dlp -f bv+ba -o "{inp_name}, {duration}" -S res:{vid_quality} --recode-video {file_type} "https://www.youtube.com{url}"')
+    elif audio in ["worst", "Worst", ""]:
+        os.chdir(f"yt-dlp-py/{file_type}")
+        os.system(f'yt-dlp -f bv+wa -o "{inp_name}, {duration}" -S res:{vid_quality} --recode-video {file_type} "https://www.youtube.com{url}"')
