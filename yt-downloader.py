@@ -98,10 +98,14 @@ elif file_type not in ['mp3']:
         print(color("Not a viable input!\nClosing...", "91"))
         exit()
     
-    audio = input(color("Do you want the worst or best audio? ", g))
+    audio = input(color("choose the audio quality\n(worst, average/avg, best): ", g))
     if audio in ['best', 'bet', 'bset', 'b']:
         os.chdir(f"yt-dlp-py/{file_type}")
         os.system(f'yt-dlp -f bv+ba -o "{inp_name}, {duration}" -S res:{vid_quality} --recode-video {file_type} "https://www.youtube.com{url}"')
     elif audio in ["worst", "Worst", ""]:
         os.chdir(f"yt-dlp-py/{file_type}")
         os.system(f'yt-dlp -f bv+wa -o "{inp_name}, {duration}" -S res:{vid_quality} --recode-video {file_type} "https://www.youtube.com{url}"')
+    elif audio in ['avg', 'average', 'avg', 'av']:
+        print(color("Video format might not be your desired format.", d))
+        os.chdir(f"yt-dlp-py/{file_type}")
+        os.system(f'yt-dlp -o "{inp_name}, {duration}" -S res:{vid_quality},aext  "https://www.youtube.com{url}"')
