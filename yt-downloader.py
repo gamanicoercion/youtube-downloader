@@ -128,6 +128,5 @@ def main(link_or_search):
         os.system(f'yt-dlp -f bv+ba -o "{inp_name}" -S res:{vid_quality} --recode-video {file_type} "https://www.youtube.com{url}"')
         done(inp_name, file_type)
         
-link_or_search = input(color("""Do you want to download with a link or through searching YouTube?\n
-                             (1 or any input for search / 2 or "link" for link) """, a))
+link_or_search = input(color('Do you want to download with a link or through searching YouTube?\n(1 or any input for search / 2 or "link" for link) ', a))
 main(link_or_search)
