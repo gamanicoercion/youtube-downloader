@@ -98,15 +98,18 @@ def main(link_or_search):
         inp_vid_quality = input(color("Do you want to choose the video quality?\n(y/n) ", x))
         if inp_vid_quality in ["y", "yes", "ye", "Y"]:
             vid_quality = input(color('Input quality of video...\n(input video quality in pixels, will round the number if not a correct value): ', b))
-            if int(vid_quality) not in range(144, 1441):
+            if int(vid_quality) not in range(144, 4321):
                 color("Not a viable input. Defualting to best video.", z)
-            elif vid_quality in range(144, 1441):
+            elif vid_quality in range(144, 4321):
                 print(color("Will use the highest resolution closest to your input...", x))
                 qualities = [144, 240, 360, 480, 720, 1080, 1440]
+                closest_quality = qualities[0]
                 for quality in qualities:
-                    if vid_quality/quality >= 1.0:
-                        vid_quality = str(quality)
-                        break
+                    dist = abs(vid_quality-quality)
+                    if dist < closest_distance:
+                        closest_distance = dist
+                        closest_quality = quality
+            vid_quality = str(closest_quality)
         elif inp_vid_quality in ['no', 'n', 'No', 'N', "nO", ""]:
             print(color("Defaulting to 720p", a))
             vid_quality = "720"
