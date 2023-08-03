@@ -17,11 +17,6 @@ def color(string, color):
 def clear_screen():
     print("\x1b[2J\x1b[H", end='')
 
-def open_file(name, file_type):
-    wants_open = input(color("Do you want to open the file?\n(y/n): ", d))
-    if wants_open in ["y", "yes", "ye", "Y", "YE"]:
-        os.startfile(f"{name}.{file_type}")
-
 if not os.path.isdir("yt-dlp-py"):
     os.mkdir("yt-dlp-py")
     for folder in ["mp4", "mp3", "webm"]:
@@ -29,7 +24,9 @@ if not os.path.isdir("yt-dlp-py"):
 
 def done(name, file_type):
     print(color(f"Done!\nFile name is {name}.{file_type}.", g))
-    open_file(name, file_type)
+    wants_open = input(color("Do you want to open the file?\n(y/n): ", d))
+    if wants_open in ["y", "yes", "ye", "Y", "YE"]:
+        os.startfile(f"{name}.{file_type}")
 
 
 def main(link_or_search): 
