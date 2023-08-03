@@ -17,6 +17,11 @@ def color(string, color):
 def clear_screen():
     print("\x1b[2J\x1b[H", end='')
 
+def open_file(name, file_type):
+    wants_open = input(color("Do you want to open the file?\n(y/n): ", d))
+    if wants_open in ["y", "yes", "ye", "Y", "YE"]:
+        os.startfile(f"{name}.{file_type}")
+
 if not os.path.isdir("yt-dlp-py"):
     os.mkdir("yt-dlp-py")
     for folder in ["mp4", "mp3", "webm"]:
@@ -24,6 +29,7 @@ if not os.path.isdir("yt-dlp-py"):
 
 def done(name, file_type):
     print(color(f"Done!\nFile name is {name}.{file_type}.", g))
+    open_file(name, file_type)
 
 
 def main(link_or_search): 
@@ -117,15 +123,11 @@ def main(link_or_search):
         else:
             print(color("Not a viable input!\nClosing...", 91))
             exit()
-        worst_vid = input(color("Do you want the worst possible video available?\n(y/n): ", c))
-        if worst_vid in ["y", "yes", "ye", "Y"]:
-            os.chdir(f"yt-dlp-py/{file_type}")
-            os.system(f'yt-dlp -f bv+ba -o "{inp_name}" -S res:{vid_quality} --recode-video {file_type} "https://www.youtube.com{url}"')
-            done(inp_name, file_type)
-        else:
-            os.chdir(f"yt-dlp-py/{file_type}")
-            os.system(f'yt-dlp -f bv+ba -o "{inp_name}" -S res:{vid_quality} --recode-video {file_type} "https://www.youtube.com{url}"')
-            done(inp_name, file_type)
 
-link_or_search = input(color('Do you want to download with a link or through searching YouTube?\n(1 or any input for search/2 or "link" for link) ', a))
+        os.chdir(f"yt-dlp-py/{file_type}")
+        os.system(f'yt-dlp -f bv+ba -o "{inp_name}" -S res:{vid_quality} --recode-video {file_type} "https://www.youtube.com{url}"')
+        done(inp_name, file_type)
+        
+link_or_search = input(color("""Do you want to download with a link or through searching YouTube?\n
+                             (1 or any input for search / 2 or "link" for link) """, a))
 main(link_or_search)
