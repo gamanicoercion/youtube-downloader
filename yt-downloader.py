@@ -24,7 +24,7 @@ if not os.path.isdir("yt-dlp-py"):
 
 def done(name, file_type):
     print(color(f"Done!\nFile name is {name}.{file_type}.", g))
-    wants_open = input(color("Do you want to open the file?\n(y/n): ", d))
+    wants_open = input(color("Do you want to open the file? (doesn't work if you're running this in CMD)\n(y/n): ", d))
     if wants_open in ["y", "yes", "ye", "Y", "YE"]:
         os.startfile(f"{name}.{file_type}")
 
