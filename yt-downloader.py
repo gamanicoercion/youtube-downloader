@@ -3,7 +3,6 @@ import json
 import os
 import random
 import os.path
-import subprocess
 os.system("")
 
 chooser = random.randint(1,2)
@@ -23,11 +22,14 @@ if not os.path.isdir("yt-dlp-py"):
     for folder in ["mp4", "mp3", "webm"]:
         os.mkdir(f"yt-dlp-py/{folder}")
 
-def done(name):
-    print(color(f"Done!\nFile name is {name}.", g))
+def done(name, file_type):
+    print(color(f"Done!\nFile name is {name}.{file_type}.", g))
+    wants_open = input(color("Do you want to open the file?\n(y/n): ", d))
+    if wants_open in ["y", "yes", "ye", "Y", "YE"]:
+        os.startfile(f"{name}.{file_type}")
 
 
-def main(link_or_search):
+def main(link_or_search): 
     if link_or_search not in ['link', '2']:
         query_or_link = input(color("Input search query: ", x)) 
         choice = True
@@ -91,33 +93,37 @@ def main(link_or_search):
         if file_type in ["mp3"]:
                 os.chdir(f"yt-dlp-py/{file_type}")
                 os.system(f'yt-dlp -o "{inp_name}, {aud_quality}" -x --audio-format mp3 --audio-quality {aud_quality} "https://www.youtube.com{url}"')
-                done(inp_name)
+                done(inp_name, file_type)
 
         
     elif file_type not in ['mp3']:
         inp_vid_quality = input(color("Do you want to choose the video quality?\n(y/n) ", x))
         if inp_vid_quality in ["y", "yes", "ye", "Y"]:
             vid_quality = input(color('Input quality of video...\n(input video quality in pixels, will round the number if not a correct value): ', b))
-            if int(vid_quality) not in range(144, 1441):
-                color("Not a viable input. Defualting to best video.", z)
-            elif vid_quality in range(144, 1441):
-                print(color("Will use the highest resolution closest to your input...", x))
-                qualities = [144, 240, 360, 480, 720, 1080, 1440]
+            if int(vid_quality) not in range(144, 4321):
+                print(color("Not a viable input. Defualting to best video.", x))
+            elif vid_quality in range(144, 4321):
+                print(color("Will use the highest resolution closest to your input...",x))
+                qualities = [144, 240, 360, 480, 720, 1080, 1440, 2160, 4320]
+                closest_distance = abs(vid_quality - qualities[0])
+                closest_quality = qualities[0]
                 for quality in qualities:
-                    if vid_quality/quality >= 1.0:
-                        vid_quality = str(quality)
-                        break
+                    dist = abs(vid_quality-quality)
+                    if dist < closest_distance:
+                        closest_distance = dist
+                        closest_quality = quality
+            vid_quality = str(closest_quality)
         elif inp_vid_quality in ['no', 'n', 'No', 'N', "nO", ""]:
             print(color("Defaulting to 720p", a))
             vid_quality = "720"
             pass
         else:
-            print(color("Not a viable input!\nClosing...", "91"))
+            print(color("Not a viable input!\nClosing...", 91))
             exit()
 
         os.chdir(f"yt-dlp-py/{file_type}")
         os.system(f'yt-dlp -f bv+ba -o "{inp_name}" -S res:{vid_quality} --recode-video {file_type} "https://www.youtube.com{url}"')
-        done(inp_name)
-
-link_or_search = input(color('Do you want to download with a link or through searching YouTube?\n(1 or any input for search/2 or "link" for link) ', a))
+        done(inp_name, file_type)
+        
+link_or_search = input(color('Do you want to download with a link or through searching YouTube?\n(1 or any input for search / 2 or "link" for link) ', a))
 main(link_or_search)
