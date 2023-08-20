@@ -112,7 +112,7 @@ def main(link_or_search):
                     if dist < closest_distance:
                         closest_distance = dist
                         closest_quality = quality
-            vid_quality = str(closest_quality)
+                vid_quality = str(closest_quality)
         elif inp_vid_quality in ['no', 'n', 'No', 'N', "nO", ""]:
             print(color("Defaulting to 720p", a))
             vid_quality = "720"
